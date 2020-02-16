@@ -49,12 +49,12 @@ def get_detail(page):
                          武汉治愈总数：wuhan_cureNum
                          武汉疑似总数：wuhan_susNum
 '''
-def get_historylist_data(historylist):
+def get_historylist_data(historylist, day):
     # 获取historylist中字典的key值
     # for key in historylist[0].keys():
     #     print(key)
     data_of_date = pd.DataFrame(historylist)
-    data_of_date.to_csv('historylist.csv')
+    data_of_date.to_csv(day + '/historylist.csv')
     print('write the info to historylist.csv over!')
     # print(data_of_date)
 '''
@@ -76,7 +76,7 @@ def get_historylist_data(historylist):
                                 deathNum: "1123"
                                 mapName: "武汉市"
 '''
-def get_list_data(list):
+def get_list_data(list, day):
     # print(type(list))
     city_list = []
     provence_name = []
@@ -88,32 +88,34 @@ def get_list_data(list):
     # print(city_list)
     # print(len(provence_name))
     # 将省份对应的市的情况（包括过往）写入csv
+    # print(provence_name)
     for i in range(0, len(provence_name)):
         data_of_city = pd.DataFrame(city_list[i])
-        data_of_city.to_csv(str(i) + '_' + provence_name[i] + '.csv')
+        data_of_city.to_csv(day + '/' + str(i) + '_' + provence_name[i] + '.csv')
     print('write the info to i_ProvenceName.csv over!')
     # 将各省（直辖市）当天总体情况（包括过往）写入csv
     data_of_provence = pd.DataFrame(list)
-    data_of_provence.to_csv('list.csv')
+    data_of_provence.to_csv(day + '/list.csv')
     print('write to list.csv over!')
 '''
     获取全世界各国家总体情况
 '''
-def get_worldlist_data(worldlist):
+def get_worldlist_data(worldlist, day):
     data_of_worldlist = pd.DataFrame(worldlist)
-    data_of_worldlist.to_csv('worldlist.csv')
+    data_of_worldlist.to_csv(day + '/worldlist.csv')
     print('write to worldlist.csv over!')
 if __name__ == '__main__':
     url = 'https://gwpre.sina.cn/interface/fymap2020_data.json?random=0.655044413123367&_=1581749886687&callback=blankCallBack'
     page = get_page(url)
     data = get_detail(page)['data']
     # ---------------------------------------------
+    day = '2020-02-16'
     # 获取国内历史信息
-    get_historylist_data(data['historylist'])
+    get_historylist_data(data['historylist'], day)
     # 获取全国各省市当前（包括）数据
-    get_list_data(data['list'])
+    get_list_data(data['list'], day)
     # 获取全世界各国家总体情况
-    get_worldlist_data(data['worldlist'])
+    get_worldlist_data(data['worldlist'], day)
 
 
 
