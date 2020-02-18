@@ -109,7 +109,7 @@ if __name__ == '__main__':
     page = get_page(url)
     data = get_detail(page)['data']
     # ---------------------------------------------
-    day = '2020-02-16'
+    day = '2020-02-18'
     # 获取国内历史信息
     get_historylist_data(data['historylist'], day)
     # 获取全国各省市当前（包括）数据

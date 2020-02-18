@@ -3,7 +3,7 @@ import pandas as pd
 plt.rcParams['font.sans-serif'] = ['SimHei']
 font1 = {'size': 14}
 font2 = {'size': 14}
-today = '2020-02-15'
+today = '2020-02-18'
 
 def progress_historylist_date(date):
     date_to_str = ['0' + str(i) for i in date]
@@ -41,7 +41,16 @@ def import_historylist_data(today):
     # 死亡率
     cn_deathRate = historylist_data['cn_deathRate']
     cn_deathRate = list(reversed(cn_deathRate))
-    return date, cn_conNum, cn_cureNum, cn_deathNum, cn_susNum, cn_cureRate, cn_deathRate
+    # 确诊人数
+    wuhan_conNum = historylist_data['wuhan_conNum']
+    wuhan_conNum = list(reversed(wuhan_conNum))
+    # 治愈人数
+    wuhan_cureNum = historylist_data['wuhan_cureNum']
+    wuhan_cureNum = list(reversed(wuhan_cureNum))
+    # 死亡人数
+    wuhan_deathNum = historylist_data['wuhan_deathNum']
+    wuhan_deathNum = list(reversed(wuhan_deathNum))
+    return date, cn_conNum, cn_cureNum, cn_deathNum, cn_susNum, cn_cureRate, cn_deathRate, wuhan_conNum, wuhan_cureNum, wuhan_deathNum
 
 
 def show_historylist_rate_pic(date, cn_cureRate, cn_deathRate):
@@ -64,7 +73,7 @@ def show_historylist_rate_pic(date, cn_cureRate, cn_deathRate):
 
 
 def show_historylist_pic(today):
-    date, cn_conNum, cn_cureNum, cn_deathNum, cn_susNum, cn_cureRate, cn_deathRate = import_historylist_data(today)
+    date, cn_conNum, cn_cureNum, cn_deathNum, cn_susNum, cn_cureRate, cn_deathRate, wuhan_conNum, wuhan_cureNum, wuhan_deathNum = import_historylist_data(today)
     # plt.figure(figsize=(1000, 700))
     plt.figure(figsize=(15, 9))
     # plt.figure()
@@ -200,7 +209,6 @@ def show_hubei_bar_pic(provence_name, conSum, cureSum, deathSum):
     plt.show()
 
 
-
 def show_cn_provence_bar_pic(provence_name, conSum, cureSum, deathSum):
     hubei = provence_name[1]
     hubei_conSum = conSum[1]
@@ -276,6 +284,42 @@ def show_cn_provence_pic(provence_name, conSum, cureSum, deathSum):
     plt.show()
 
 
+def show_cn_expect_wuhan_pic(today):
+    date, cn_conNum, cn_cureNum, cn_deathNum, cn_susNum, cn_cureRate, cn_deathRate, wuhan_conNum, wuhan_cureNum, wuhan_deathNum = import_historylist_data(today)
+    plt.figure(figsize=(15, 9))
+    # plt.figure()
+    plt.xticks(rotation=45)
+    plt.xlabel('日期', font1)
+    plt.ylabel('人数', font1)
+    plt.title('2019-nCoV 情况变化图', font1)
+    # plt.ylim((-1000, 70000))
+    expect_wuhan_conNum = [cn_conNum[i] - wuhan_conNum[i] for i in range(len(cn_conNum))]
+    expect_wuhan_cureNum = [cn_cureNum[i] - wuhan_cureNum[i] for i in range(len(cn_cureNum))]
+    expect_wuhan_deathNum = [cn_deathNum[i] - wuhan_deathNum[i] for i in range(len(cn_deathNum))]
+    # print(expect_wuhan_conNum)
+    # print(expect_wuhan_cureNum)
+    # print(expect_wuhan_deathNum)
+
+    # 确诊
+    expect_wuhan_conNum_line, = plt.plot(date, expect_wuhan_conNum, 'r-o')
+    # print(date, cn_conNum)
+    for a, b in zip(date, expect_wuhan_conNum):
+        plt.text(a, b, b, ha='center', va='bottom')
+    # 治愈
+    expect_wuhan_cureNum_line, = plt.plot(date, expect_wuhan_cureNum, 'c-*')
+    # for a, b in zip(date, cn_cureNum):
+    #     plt.text(a, b, b, ha='center', va='bottom')
+    # 死亡
+    expect_wuhan_deathNum_line, = plt.plot(date, expect_wuhan_deathNum, 'k--')
+    # for a, b in zip(date, cn_deathNum):
+    #     plt.text(a, b, b, ha='center', va='bottom')
+    # 图例
+    plt.legend(handles=[expect_wuhan_conNum_line, expect_wuhan_cureNum_line, expect_wuhan_deathNum_line],
+               labels=["确诊", "治愈", "死亡"], loc="upper left", fontsize=15)
+    plt.savefig("img_" + today + "/cn_expect_wuhan.jpg")
+    plt.show()
+
 if __name__ == '__main__':
     show_historylist_pic(today)
     show_provence_data(today)
+    show_cn_expect_wuhan_pic(today)
